@@ -26,6 +26,7 @@
                    android:layout_height="wrap_content"
                    android:background="@drawable/img_conversation"/>
                <TextView
+                   android:id="@+id/tv_tab_conversation"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:text="会话"
@@ -43,6 +44,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/img_group"/>
                 <TextView
+                    android:id="@+id/tv_tab_group"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="分组"
@@ -60,6 +62,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/img_search"/>
                 <TextView
+                    android:id="@+id/tv_tab_search"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="搜索"

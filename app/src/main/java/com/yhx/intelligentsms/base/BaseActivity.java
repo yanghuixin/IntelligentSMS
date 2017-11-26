@@ -5,13 +5,14 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 /**
  * Created by Administrator on 2017/11/24.
  */
 
-public abstract class BaseActivity extends Activity implements View.OnClickListener {
+public abstract class BaseActivity extends FragmentActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
