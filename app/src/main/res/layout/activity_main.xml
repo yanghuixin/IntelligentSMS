@@ -16,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
            <LinearLayout
+               android:id="@+id/ll_tab_conversation"
                android:layout_width="0dp"
                android:layout_height="match_parent"
                android:layout_weight="1"
@@ -34,6 +35,7 @@
                    android:textSize="14sp"/>
            </LinearLayout>
             <LinearLayout
+                android:id="@+id/ll_tab_group"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -52,6 +54,7 @@
                     android:textSize="14sp"/>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/ll_tab_search"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -71,6 +74,7 @@
             </LinearLayout>
         </LinearLayout>
         <View
+            android:id="@+id/v_indicate_line"
             android:layout_width="60dp"
             android:layout_height="4dp"
             android:background="@color/colorRed"
