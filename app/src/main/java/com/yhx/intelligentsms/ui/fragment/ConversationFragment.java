@@ -1,5 +1,6 @@
 package com.yhx.intelligentsms.ui.fragment;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -8,10 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.yhx.intelligentsms.R;
+import com.yhx.intelligentsms.adapter.ConversationListAdapter;
 import com.yhx.intelligentsms.base.BaseFragment;
+import com.yhx.intelligentsms.dao.SimpleQueryHandler;
+import com.yhx.intelligentsms.globle.Constant;
+import com.yhx.intelligentsms.utils.CursorUtils;
 
 /**
  * Created by Administrator on 2017/11/27.
@@ -26,11 +32,14 @@ public class ConversationFragment extends BaseFragment {
     private Button bt_conversation_delete;
     private LinearLayout ll_conversation_edit_menu;
     private LinearLayout ll_conversation_select_menu;
+    private ListView lv_conversation_list;
+    private ConversationListAdapter conversationListAdapter;
     @Override
     public View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //填充布局对象，返回view对象
         View view = inflater.inflate(R.layout.fragment_conversation,null);
 
+        lv_conversation_list = view.findViewById(R.id.lv_conversation_list);
         bt_conversation_edit = view.findViewById(R.id.bt_conversation_edit);
         bt_conversation_new_msg = view.findViewById(R.id.bt_conversation_new_msg);
         bt_conversation_select_all = view.findViewById(R.id.bt_conversation_select_all);
@@ -52,7 +61,15 @@ public class ConversationFragment extends BaseFragment {
 
     @Override
     public void initData() {
-
+        //创建一个CursorAdapter对象
+        conversationListAdapter = new ConversationListAdapter(getActivity(),null);
+        lv_conversation_list.setAdapter(conversationListAdapter);
+        //Cursor cursor = getActivity().getContentResolver().query(Constant.URI.URI_SMS_CONVERSATION,null,null,null,null);
+        SimpleQueryHandler simpleQueryHandler = new SimpleQueryHandler(getActivity().getContentResolver());
+        //开始异步查询
+        //arg0、arg1：可以用来携带一个int型和一个对象
+        //arg1：用来携带adapter对象，查询完毕后给adapter设置cursor
+        simpleQueryHandler.startQuery(0,conversationListAdapter,Constant.URI.URI_SMS_CONVERSATION,null,null,null,null);
     }
 
     @Override

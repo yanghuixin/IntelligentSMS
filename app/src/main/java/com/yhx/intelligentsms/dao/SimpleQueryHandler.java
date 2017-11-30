@@ -1,0 +1,31 @@
+package com.yhx.intelligentsms.dao;
+
+import android.content.AsyncQueryHandler;
+import android.content.ContentResolver;
+import android.database.Cursor;
+import android.widget.CursorAdapter;
+
+import com.yhx.intelligentsms.utils.CursorUtils;
+
+/**
+ * Created by Administrator on 2017/11/29.
+ */
+
+public class SimpleQueryHandler extends AsyncQueryHandler {
+
+    public SimpleQueryHandler(ContentResolver cr) {
+        super(cr);
+    }
+
+    //查询完毕时调用
+    //arg0、arg1：查询开始时携带的数据
+    //arg2：查询结果
+    @Override
+    protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
+        super.onQueryComplete(token, cookie, cursor);
+        CursorUtils.printCursor(cursor);
+        if (cookie != null && cookie instanceof CursorAdapter){
+            ((CursorAdapter) cookie).changeCursor(cursor);
+        }
+    }
+}
