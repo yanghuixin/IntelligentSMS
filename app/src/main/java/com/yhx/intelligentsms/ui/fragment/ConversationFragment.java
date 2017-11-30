@@ -66,10 +66,18 @@ public class ConversationFragment extends BaseFragment {
         lv_conversation_list.setAdapter(conversationListAdapter);
         //Cursor cursor = getActivity().getContentResolver().query(Constant.URI.URI_SMS_CONVERSATION,null,null,null,null);
         SimpleQueryHandler simpleQueryHandler = new SimpleQueryHandler(getActivity().getContentResolver());
+
+        String[] projection = {
+                "sms.body As snippet",
+                "sms.thread_id As _id",
+                "sms.msg_count As msg_count",
+                "address As address",
+                "date As date"
+        };
         //开始异步查询
         //arg0、arg1：可以用来携带一个int型和一个对象
         //arg1：用来携带adapter对象，查询完毕后给adapter设置cursor
-        simpleQueryHandler.startQuery(0,conversationListAdapter,Constant.URI.URI_SMS_CONVERSATION,null,null,null,null);
+        simpleQueryHandler.startQuery(0,conversationListAdapter,Constant.URI.URI_SMS_CONVERSATION,projection,null,null,null);
     }
 
     @Override
