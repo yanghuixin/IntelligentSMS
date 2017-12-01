@@ -77,7 +77,7 @@ public class ConversationFragment extends BaseFragment {
         //开始异步查询
         //arg0、arg1：可以用来携带一个int型和一个对象
         //arg1：用来携带adapter对象，查询完毕后给adapter设置cursor
-        simpleQueryHandler.startQuery(0,conversationListAdapter,Constant.URI.URI_SMS_CONVERSATION,projection,null,null,null);
+        simpleQueryHandler.startQuery(0,conversationListAdapter,Constant.URI.URI_SMS_CONVERSATION,projection,null,null,"date desc");
     }
 
     @Override

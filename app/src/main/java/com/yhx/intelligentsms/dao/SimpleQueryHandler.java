@@ -23,7 +23,7 @@ public class SimpleQueryHandler extends AsyncQueryHandler {
     @Override
     protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
         super.onQueryComplete(token, cookie, cursor);
-        CursorUtils.printCursor(cursor);
+        //CursorUtils.printCursor(cursor);
         if (cookie != null && cookie instanceof CursorAdapter){
             //查询得到的cursor，交给CursorAdapter，由它把cursor的内容显示至listView
             ((CursorAdapter) cookie).changeCursor(cursor);
