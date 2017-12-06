@@ -8,7 +8,7 @@ import android.database.Cursor;
 
 public class Conversation {
     private String snippet;
-    private String threadId;
+    private int threadId;
     private String msgCount;
     private long date;
     private String address;
@@ -21,7 +21,7 @@ public class Conversation {
     public static Conversation createFromCursor(Cursor cursor){
         Conversation conversation = new Conversation();
         conversation.setSnippet(cursor.getString(cursor.getColumnIndex("snippet")));
-        conversation.setThreadId(cursor.getString(cursor.getColumnIndex("_id")));
+        conversation.setThreadId(cursor.getInt(cursor.getColumnIndex("_id")));
         conversation.setMsgCount(cursor.getString(cursor.getColumnIndex("msg_count")));
         conversation.setAddress(cursor.getString(cursor.getColumnIndex("address")));
         conversation.setDate(cursor.getLong(cursor.getColumnIndex("date")));
@@ -36,11 +36,11 @@ public class Conversation {
         this.snippet = snippet;
     }
 
-    public String getThreadId() {
+    public int getThreadId() {
         return threadId;
     }
 
-    public void setThreadId(String threadId) {
+    public void setThreadId(int threadId) {
         this.threadId = threadId;
     }
 

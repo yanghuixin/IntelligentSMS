@@ -17,11 +17,17 @@ import com.yhx.intelligentsms.R;
 import com.yhx.intelligentsms.bean.Conversation;
 import com.yhx.intelligentsms.dao.ContactDao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Administrator on 2017/11/30.
  */
 
 public class ConversationListAdapter extends CursorAdapter {
+
+    private boolean isSelectMode = false;
+    private List<Integer> selectedConversationIds = new ArrayList<Integer>();
 
     public ConversationListAdapter(Context context, Cursor c) {
         super(context, c);
@@ -40,6 +46,18 @@ public class ConversationListAdapter extends CursorAdapter {
         //根据cursor内容创建会话对象，此时cursor的指针已经移动至正确的位置
         Conversation conversation = Conversation.createFromCursor(cursor);
 
+        //判断当前是否进入选择模式
+        if (isSelectMode){
+            viewHolder.tv_check.setVisibility(View.VISIBLE);
+            //判断集合中是否包含会话id,从而确定该条目是否被选中
+            if (selectedConversationIds.contains(conversation.getThreadId())){
+                viewHolder.tv_check.setBackgroundResource(R.drawable.common_checkbox_checked);
+            }else {
+                viewHolder.tv_check.setBackgroundResource(R.drawable.common_checkbox_normal);
+            }
+        }else {
+            viewHolder.tv_check.setVisibility(View.GONE);
+        }
         //设置号码
         //按号码查询是否存有联系人
         String name = ContactDao.getNameByAddress(context.getContentResolver(),conversation.getAddress());
@@ -86,12 +104,44 @@ public class ConversationListAdapter extends CursorAdapter {
         private TextView tv_conversation_address;
         private TextView tv_conversation_body;
         private TextView tv_conversation_date;
+        private ImageView tv_check;
         //参数就是条目的view对象
         public ViewHolder(View view){
             iv_conversation_avatar = view.findViewById(R.id.iv_conversation_avatar);
             tv_conversation_address = view.findViewById(R.id.tv_conversation_address);
             tv_conversation_body = view.findViewById(R.id.tv_conversation_body);
             tv_conversation_date = view.findViewById(R.id.tv_conversation_date);
+            tv_check = view.findViewById(R.id.tv_check);
         }
     }
+
+    /**
+     * 把选中的条目存入集合
+     * @param position
+     */
+    public void selectSingle(int position){
+        //从cursor中取出position对应的会话
+        Cursor cursor = (Cursor) getItem(position);
+        Conversation conversation = Conversation.createFromCursor(cursor);
+        if (selectedConversationIds.contains(conversation.getThreadId())){
+            //强转为Integer，否则是把参数作为索引而不是要删除的yuan
+            selectedConversationIds.remove((Integer) conversation.getThreadId());
+        }else {
+            selectedConversationIds.add(conversation.getThreadId());
+        }
+        notifyDataSetChanged();
+    }
+
+    public boolean isSelectMode() {
+        return isSelectMode;
+    }
+
+    public void setSelectMode(boolean selectMode) {
+        isSelectMode = selectMode;
+    }
+
+    public List<Integer> getSelectedConversationIds() {
+        return selectedConversationIds;
+    }
+
 }

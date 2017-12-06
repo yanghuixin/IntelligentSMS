@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -16,8 +17,11 @@ import com.yhx.intelligentsms.R;
 import com.yhx.intelligentsms.adapter.ConversationListAdapter;
 import com.yhx.intelligentsms.base.BaseFragment;
 import com.yhx.intelligentsms.dao.SimpleQueryHandler;
+import com.yhx.intelligentsms.dialog.ConfirmDialog;
 import com.yhx.intelligentsms.globle.Constant;
 import com.yhx.intelligentsms.utils.CursorUtils;
+
+import java.util.List;
 
 /**
  * Created by Administrator on 2017/11/27.
@@ -34,6 +38,7 @@ public class ConversationFragment extends BaseFragment {
     private LinearLayout ll_conversation_select_menu;
     private ListView lv_conversation_list;
     private ConversationListAdapter conversationListAdapter;
+    private List<Integer> selectedConversationIds;
     @Override
     public View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //填充布局对象，返回view对象
@@ -57,6 +62,18 @@ public class ConversationFragment extends BaseFragment {
         bt_conversation_select_all.setOnClickListener(this);
         bt_conversation_cancel_select.setOnClickListener(this);
         bt_conversation_delete.setOnClickListener(this);
+        lv_conversation_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (conversationListAdapter.isSelectMode()){
+                    //选中选框
+                    conversationListAdapter.selectSingle(position);
+                }else {
+                    //进入会话
+
+                }
+            }
+        });
     }
 
     @Override
@@ -70,7 +87,7 @@ public class ConversationFragment extends BaseFragment {
         String[] projection = {
                 "sms.body As snippet",
                 "sms.thread_id As _id",
-                "sms.msg_count As msg_count",
+                "groups.msg_count As msg_count",
                 "address As address",
                 "date As date"
         };
@@ -85,6 +102,9 @@ public class ConversationFragment extends BaseFragment {
         switch (v.getId()){
             case R.id.bt_conversation_edit:
                 showSelectMenu();
+                //进入选择模式
+                conversationListAdapter.setSelectMode(true);
+                conversationListAdapter.notifyDataSetChanged();
                 break;
             case R.id.bt_conversation_new_msg:
                 break;
@@ -92,8 +112,17 @@ public class ConversationFragment extends BaseFragment {
                 break;
             case R.id.bt_conversation_cancel_select:
                 showEditMenu();
+                //退出选择模式
+                conversationListAdapter.setSelectMode(false);
+                conversationListAdapter.notifyDataSetChanged();
                 break;
             case R.id.bt_conversation_delete:
+                selectedConversationIds = conversationListAdapter.getSelectedConversationIds();
+                if (selectedConversationIds.size() == 0){
+                    return;
+                }
+                showDeleteDialog();
+//                deleteSms();
                 break;
         }
     }
@@ -124,5 +153,17 @@ public class ConversationFragment extends BaseFragment {
                 ViewPropertyAnimator.animate(ll_conversation_edit_menu).translationY(0).setDuration(200);
             }
         },200);
+    }
+
+    private void deleteSms(){
+        for (int i = 0; i < selectedConversationIds.size(); i++){
+            //取出集合中的会话id，以id作为where条件删除所有符合条件的短信
+            String where = "thread_id = " + selectedConversationIds.get(i);
+            getActivity().getContentResolver().delete(Constant.URI.URI_SMS, where, null);
+        }
+    }
+
+    private void showDeleteDialog(){
+        ConfirmDialog.showDialog(getActivity());
     }
 }
