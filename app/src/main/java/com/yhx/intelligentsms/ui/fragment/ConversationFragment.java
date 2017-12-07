@@ -1,6 +1,5 @@
 package com.yhx.intelligentsms.ui.fragment;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -19,7 +18,6 @@ import com.yhx.intelligentsms.base.BaseFragment;
 import com.yhx.intelligentsms.dao.SimpleQueryHandler;
 import com.yhx.intelligentsms.dialog.ConfirmDialog;
 import com.yhx.intelligentsms.globle.Constant;
-import com.yhx.intelligentsms.utils.CursorUtils;
 
 import java.util.List;
 
@@ -71,6 +69,17 @@ public class ConversationFragment extends BaseFragment {
                 }else {
                     //进入会话
 
+                }
+            }
+        });
+        lv_conversation_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (conversationListAdapter.isSelectMode()){
+                    //选中选框
+                    conversationListAdapter.selectSingle(position);
+                }else {
+                    //进入会话详情
                 }
             }
         });

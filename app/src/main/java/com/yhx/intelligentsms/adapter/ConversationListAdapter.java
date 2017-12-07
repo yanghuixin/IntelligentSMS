@@ -29,6 +29,18 @@ public class ConversationListAdapter extends CursorAdapter {
     private boolean isSelectMode = false;
     private List<Integer> selectedConversationIds = new ArrayList<Integer>();
 
+
+    //记录选择模式下选中哪些条目
+    List<Integer> selectedConversationId = new ArrayList<>();
+
+    public boolean isSelectMode() {
+        return isSelectMode;
+    }
+
+    public void setSelectMode(boolean selectMode) {
+        isSelectMode = selectMode;
+    }
+
     public ConversationListAdapter(Context context, Cursor c) {
         super(context, c);
     }
@@ -57,6 +69,17 @@ public class ConversationListAdapter extends CursorAdapter {
             }
         }else {
             viewHolder.tv_check.setVisibility(View.GONE);
+        }
+        //判断当前是否进入选择模式
+        if (isSelectMode){
+            viewHolder.iv_check.setVisibility(View.VISIBLE);
+            if (selectedConversationId.contains(conversation.getThreadId())){
+                viewHolder.iv_check.setBackgroundResource(R.drawable.common_checkbox_checked);
+            }else {
+                viewHolder.iv_check.setBackgroundResource(R.drawable.common_checkbox_normal);
+            }
+        }else {
+            viewHolder.iv_check.setVisibility(View.GONE);
         }
         //设置号码
         //按号码查询是否存有联系人
@@ -105,6 +128,7 @@ public class ConversationListAdapter extends CursorAdapter {
         private TextView tv_conversation_body;
         private TextView tv_conversation_date;
         private ImageView tv_check;
+        private ImageView iv_check;
         //参数就是条目的view对象
         public ViewHolder(View view){
             iv_conversation_avatar = view.findViewById(R.id.iv_conversation_avatar);
@@ -130,14 +154,6 @@ public class ConversationListAdapter extends CursorAdapter {
             selectedConversationIds.add(conversation.getThreadId());
         }
         notifyDataSetChanged();
-    }
-
-    public boolean isSelectMode() {
-        return isSelectMode;
-    }
-
-    public void setSelectMode(boolean selectMode) {
-        isSelectMode = selectMode;
     }
 
     public List<Integer> getSelectedConversationIds() {
