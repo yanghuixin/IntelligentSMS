@@ -131,7 +131,6 @@ public class ConversationFragment extends BaseFragment {
                     return;
                 }
                 showDeleteDialog();
-//                deleteSms();
                 break;
         }
     }
@@ -173,6 +172,16 @@ public class ConversationFragment extends BaseFragment {
     }
 
     private void showDeleteDialog(){
-        ConfirmDialog.showDialog(getActivity());
+        ConfirmDialog.showDialog(getActivity(), "提示", "真的要删除回话吗？", new ConfirmDialog.OnConfirmListener() {
+            @Override
+            public void onCancel() {
+                deleteSms();
+            }
+
+            @Override
+            public void onConfirm() {
+
+            }
+        });
     }
 }
