@@ -2,6 +2,7 @@ package com.yhx.intelligentsms.ui.fragment;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.yhx.intelligentsms.adapter.ConversationListAdapter;
 import com.yhx.intelligentsms.base.BaseFragment;
 import com.yhx.intelligentsms.dao.SimpleQueryHandler;
 import com.yhx.intelligentsms.dialog.ConfirmDialog;
+import com.yhx.intelligentsms.dialog.DeleteMsgDialog;
 import com.yhx.intelligentsms.globle.Constant;
 
 import java.util.List;
@@ -37,6 +39,28 @@ public class ConversationFragment extends BaseFragment {
     private ListView lv_conversation_list;
     private ConversationListAdapter conversationListAdapter;
     private List<Integer> selectedConversationIds;
+    private DeleteMsgDialog dialog;
+
+    private static final int WHAT_DELETE_COMPLETE = 0;
+    private static final int WHAT_UPDATE_DELETE_PROGRESS = 1;
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case WHAT_DELETE_COMPLETE:
+                    //退出选择模式，显示编辑菜单
+                    conversationListAdapter.setSelectMode(false);
+                    conversationListAdapter.notifyDataSetChanged();
+                    showEditMenu();
+                    dialog.dismiss();
+                    break;
+                case WHAT_UPDATE_DELETE_PROGRESS:
+                    dialog.updateProgressAndTitle(msg.arg1 + 1);
+                    break;
+            }
+        }
+    };
+
     @Override
     public View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //填充布局对象，返回view对象
@@ -163,12 +187,40 @@ public class ConversationFragment extends BaseFragment {
         },200);
     }
 
+    boolean isStopDelete = false;
     private void deleteSms(){
-        for (int i = 0; i < selectedConversationIds.size(); i++){
-            //取出集合中的会话id，以id作为where条件删除所有符合条件的短信
-            String where = "thread_id = " + selectedConversationIds.get(i);
-            getActivity().getContentResolver().delete(Constant.URI.URI_SMS, where, null);
-        }
+        //弹出删除进度对话框
+        dialog = DeleteMsgDialog.showDeleteDialog(getActivity(), selectedConversationIds.size(), new DeleteMsgDialog.OnDeleteCancelListener() {
+            @Override
+            public void onCancel() {
+                isStopDelete = true;
+            }
+        });
+        Thread t = new Thread(){
+            @Override
+            public void run() {
+                for (int i = 0; i < selectedConversationIds.size(); i++){
+                    //中断删除
+                    if (isStopDelete){
+                        isStopDelete = false;
+                        break;
+                    }
+                    //取出集合中的会话id，以id作为where条件删除所有符合条件的短信
+                    String where = "thread_id = " + selectedConversationIds.get(i);
+                    getActivity().getContentResolver().delete(Constant.URI.URI_SMS, where, null);
+                    //发送消息，让删除进度条刷新，同时把当前的删除进度传给进度条
+                    Message msg = handler.obtainMessage();
+                    msg.what = WHAT_UPDATE_DELETE_PROGRESS;
+                    //把当前删除进度存入消息中
+                    msg.arg1 = i;
+                    handler.sendMessage(msg);
+                }
+                //删除会话后，清除集合
+                selectedConversationIds.clear();
+                handler.sendEmptyMessage(WHAT_DELETE_COMPLETE);
+            }
+        };
+        t.start();
     }
 
     private void showDeleteDialog(){
