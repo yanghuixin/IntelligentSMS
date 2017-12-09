@@ -128,9 +128,9 @@ public class ConversationFragment extends BaseFragment {
         SimpleQueryHandler simpleQueryHandler = new SimpleQueryHandler(getActivity().getContentResolver());
 
         String[] projection = {
-                "sms.body As snippet",
-                "sms.thread_id As _id",
-                "groups.msg_count As msg_count",
+                "body As snippet",
+                "thread_id As _id",
+                //"groups.msg_count As msg_count",
                 "address As address",
                 "date As date"
         };

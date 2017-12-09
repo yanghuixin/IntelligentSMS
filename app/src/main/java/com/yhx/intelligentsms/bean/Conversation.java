@@ -9,7 +9,7 @@ import android.database.Cursor;
 public class Conversation {
     private String snippet;
     private int threadId;
-    private String msgCount;
+    //private String msgCount;
     private long date;
     private String address;
 
@@ -22,7 +22,7 @@ public class Conversation {
         Conversation conversation = new Conversation();
         conversation.setSnippet(cursor.getString(cursor.getColumnIndex("snippet")));
         conversation.setThreadId(cursor.getInt(cursor.getColumnIndex("_id")));
-        conversation.setMsgCount(cursor.getString(cursor.getColumnIndex("msg_count")));
+        //conversation.setMsgCount(cursor.getString(cursor.getColumnIndex("msg_count")));
         conversation.setAddress(cursor.getString(cursor.getColumnIndex("address")));
         conversation.setDate(cursor.getLong(cursor.getColumnIndex("date")));
         return conversation;
@@ -44,13 +44,13 @@ public class Conversation {
         this.threadId = threadId;
     }
 
-    public String getMsgCount() {
+    /*public String getMsgCount() {
         return msgCount;
-    }
+    }*/
 
-    public void setMsgCount(String msgCount) {
+    /*public void setMsgCount(String msgCount) {
         this.msgCount = msgCount;
-    }
+    }*/
 
     public long getDate() {
         return date;

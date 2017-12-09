@@ -9,7 +9,7 @@ import android.database.Cursor;
 public class CursorUtils {
 
     public static void printCursor(Cursor cursor){
-        //LogUtils.i(cursor, "一共有" + cursor.getCount() + "条数据");
+        LogUtils.i(cursor, "一共有" + cursor.getCount() + "条数据");
         while (cursor.moveToNext()){
             for (int i = 0 ; i < cursor.getColumnCount() ; i ++){
                 String name = cursor.getColumnName(i);

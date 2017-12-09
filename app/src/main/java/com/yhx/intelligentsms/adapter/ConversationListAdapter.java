@@ -85,9 +85,11 @@ public class ConversationListAdapter extends CursorAdapter {
         //按号码查询是否存有联系人
         String name = ContactDao.getNameByAddress(context.getContentResolver(),conversation.getAddress());
         if (TextUtils.isEmpty(name)){
-            viewHolder.tv_conversation_address.setText(conversation.getAddress() + "(" + conversation.getMsgCount() + ")");
+            //viewHolder.tv_conversation_address.setText(conversation.getAddress() + "(" + conversation.getMsgCount() + ")");
+            viewHolder.tv_conversation_address.setText(conversation.getAddress());
         }else {
-            viewHolder.tv_conversation_address.setText(name + "(" + conversation.getMsgCount() + ")");
+            //viewHolder.tv_conversation_address.setText(name + "(" + conversation.getMsgCount() + ")");
+            viewHolder.tv_conversation_address.setText(name);
         }
         //设置短信内容
         viewHolder.tv_conversation_body.setText(conversation.getSnippet());
@@ -148,7 +150,7 @@ public class ConversationListAdapter extends CursorAdapter {
         Cursor cursor = (Cursor) getItem(position);
         Conversation conversation = Conversation.createFromCursor(cursor);
         if (selectedConversationIds.contains(conversation.getThreadId())){
-            //强转为Integer，否则是把参数作为索引而不是要删除的yuan
+            //强转为Integer，否则是把参数作为索引而不是要删除的源
             selectedConversationIds.remove((Integer) conversation.getThreadId());
         }else {
             selectedConversationIds.add(conversation.getThreadId());
