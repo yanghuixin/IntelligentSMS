@@ -1,5 +1,7 @@
 package com.yhx.intelligentsms.ui.fragment;
 
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,10 +18,12 @@ import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.yhx.intelligentsms.R;
 import com.yhx.intelligentsms.adapter.ConversationListAdapter;
 import com.yhx.intelligentsms.base.BaseFragment;
+import com.yhx.intelligentsms.bean.Conversation;
 import com.yhx.intelligentsms.dao.SimpleQueryHandler;
 import com.yhx.intelligentsms.dialog.ConfirmDialog;
 import com.yhx.intelligentsms.dialog.DeleteMsgDialog;
 import com.yhx.intelligentsms.globle.Constant;
+import com.yhx.intelligentsms.ui.activity.ConversationDetailActivity;
 
 import java.util.List;
 
@@ -92,7 +96,13 @@ public class ConversationFragment extends BaseFragment {
                     conversationListAdapter.selectSingle(position);
                 }else {
                     //进入会话
-
+                    Intent intent = new Intent(getActivity(), ConversationDetailActivity.class);
+                    //携带数据：address和thread_id
+                    Cursor cursor = (Cursor) conversationListAdapter.getItem(position);
+                    Conversation conversation = Conversation.createFromCursor(cursor);
+                    intent.putExtra("address", conversation.getAddress());
+                    intent.putExtra("thread_id", conversation.getThreadId());
+                    startActivity(intent);
                 }
             }
         });
