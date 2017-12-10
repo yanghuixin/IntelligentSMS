@@ -7,6 +7,7 @@ import android.text.format.DateUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.yhx.intelligentsms.R;
@@ -19,8 +20,12 @@ import com.yhx.intelligentsms.globle.Constant;
 
 public class ConversationDetailAdapter extends CursorAdapter {
 
-    public ConversationDetailAdapter(Context context, Cursor c) {
+    private static final int DURATION = 3 * 60 * 1000;
+    private ListView listView;
+
+    public ConversationDetailAdapter(Context context, Cursor c, ListView listView) {
         super(context, c);
+        this.listView = listView;
     }
 
     @Override
@@ -35,13 +40,19 @@ public class ConversationDetailAdapter extends CursorAdapter {
         //数据全在sms对象里
         Sms sms = Sms.createFromCursor(cursor);
         //设置显示内容
-        //设置时间
-        if (DateUtils.isToday(sms.getDate())){
-            viewHolder.tv_conversation_detail_date.setText(DateFormat.getTimeFormat(context).format(sms.getDate()));
+        //判断当前短信与上一条短信的时间间隔是否超过3分钟
+        //第一条短信，不需要对比
+        if (cursor.getPosition() == 0){
+            showDate(context,viewHolder,sms);
         }else {
-            viewHolder.tv_conversation_detail_date.setText(DateFormat.getDateFormat(context).format(sms.getDate()));
+            long preDate = getPreviousSmsDate(cursor.getPosition());
+            if (sms.getDate() - preDate > DURATION){
+                viewHolder.tv_conversation_detail_date.setVisibility(View.VISIBLE);
+                showDate(context,viewHolder,sms);
+            }else {
+                viewHolder.tv_conversation_detail_date.setVisibility(View.GONE);
+            }
         }
-
         viewHolder.tv_conversation_detail_receive.setVisibility(sms.getType() == Constant.SMS.TYPE_RECEIVE ? View.VISIBLE : View.GONE);
         viewHolder.tv_conversation_detail_send.setVisibility(sms.getType() == Constant.SMS.TYPE_SEND ? View.VISIBLE : View.GONE);
 
@@ -50,6 +61,33 @@ public class ConversationDetailAdapter extends CursorAdapter {
         }else {
             viewHolder.tv_conversation_detail_send.setText(sms.getBody());
         }
+    }
+
+    public void showDate(Context context, ViewHolder viewHolder, Sms sms){
+        //设置时间
+        if (DateUtils.isToday(sms.getDate())){
+            viewHolder.tv_conversation_detail_date.setText(DateFormat.getTimeFormat(context).format(sms.getDate()));
+        }else {
+            viewHolder.tv_conversation_detail_date.setText(DateFormat.getDateFormat(context).format(sms.getDate()));
+        }
+    }
+
+    /**
+     * 获取上一条短信的时间
+     * @param position
+     * @return
+     */
+    public long getPreviousSmsDate(int position){
+        Cursor cursor = (Cursor) getItem(position - 1);
+        Sms sms = Sms.createFromCursor(cursor);
+        return sms.getDate();
+    }
+
+    @Override
+    public void changeCursor(Cursor cursor) {
+        super.changeCursor(cursor);
+        //让listview滑动到指定条目上
+        listView.setSelection(getCount());
     }
 
     public ViewHolder getHolder(View view){

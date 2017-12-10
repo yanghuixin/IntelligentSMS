@@ -29,7 +29,6 @@ public class ConversationListAdapter extends CursorAdapter {
     private boolean isSelectMode = false;
     private List<Integer> selectedConversationIds = new ArrayList<Integer>();
 
-
     //记录选择模式下选中哪些条目
     List<Integer> selectedConversationId = new ArrayList<>();
 
@@ -60,15 +59,15 @@ public class ConversationListAdapter extends CursorAdapter {
 
         //判断当前是否进入选择模式
         if (isSelectMode){
-            viewHolder.tv_check.setVisibility(View.VISIBLE);
+            viewHolder.iv_check.setVisibility(View.VISIBLE);
             //判断集合中是否包含会话id,从而确定该条目是否被选中
             if (selectedConversationIds.contains(conversation.getThreadId())){
-                viewHolder.tv_check.setBackgroundResource(R.drawable.common_checkbox_checked);
+                viewHolder.iv_check.setBackgroundResource(R.drawable.common_checkbox_checked);
             }else {
-                viewHolder.tv_check.setBackgroundResource(R.drawable.common_checkbox_normal);
+                viewHolder.iv_check.setBackgroundResource(R.drawable.common_checkbox_normal);
             }
         }else {
-            viewHolder.tv_check.setVisibility(View.GONE);
+            viewHolder.iv_check.setVisibility(View.GONE);
         }
         //判断当前是否进入选择模式
         if (isSelectMode){
@@ -129,7 +128,6 @@ public class ConversationListAdapter extends CursorAdapter {
         private TextView tv_conversation_address;
         private TextView tv_conversation_body;
         private TextView tv_conversation_date;
-        private ImageView tv_check;
         private ImageView iv_check;
         //参数就是条目的view对象
         public ViewHolder(View view){
@@ -137,7 +135,7 @@ public class ConversationListAdapter extends CursorAdapter {
             tv_conversation_address = view.findViewById(R.id.tv_conversation_address);
             tv_conversation_body = view.findViewById(R.id.tv_conversation_body);
             tv_conversation_date = view.findViewById(R.id.tv_conversation_date);
-            tv_check = view.findViewById(R.id.tv_check);
+            iv_check = view.findViewById(R.id.iv_check);
         }
     }
 
