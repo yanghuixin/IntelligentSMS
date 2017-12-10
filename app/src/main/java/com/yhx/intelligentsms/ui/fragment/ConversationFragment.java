@@ -44,6 +44,7 @@ public class ConversationFragment extends BaseFragment {
     private ConversationListAdapter conversationListAdapter;
     private List<Integer> selectedConversationIds;
     private DeleteMsgDialog dialog;
+    private boolean isStopDelete = false;
 
     private static final int WHAT_DELETE_COMPLETE = 0;
     private static final int WHAT_UPDATE_DELETE_PROGRESS = 1;
@@ -186,7 +187,6 @@ public class ConversationFragment extends BaseFragment {
         },200);
     }
 
-    boolean isStopDelete = false;
     private void deleteSms(){
         //弹出删除进度对话框
         dialog = DeleteMsgDialog.showDeleteDialog(getActivity(), selectedConversationIds.size(), new DeleteMsgDialog.OnDeleteCancelListener() {
