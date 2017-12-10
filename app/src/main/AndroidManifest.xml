@@ -33,6 +33,11 @@
                 <action android:name="com.yhx.intelligentsms.sendsms"/>
             </intent-filter>
         </receiver>
+
+        <provider
+            android:authorities="com.yhx.intelligentsms"
+            android:name=".provider.GroupProvider"
+            android:exported="true"/>
     </application>
 
     <meta-date
