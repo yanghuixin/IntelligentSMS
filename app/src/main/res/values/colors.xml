@@ -7,7 +7,9 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorRed">#CE0000</color>
     <color name="colorGrayish">#CCCCCC</color>
+    <color name="colorPale">#EFEFEF</color>
     <color name="colorBlack">#000000</color>
+    <color name="colorTransparencyBlack">#99000000</color>
     <color name="colorLightGray">#33666666</color>
     <color name="colorBlue">#0000ff</color>
 </resources>

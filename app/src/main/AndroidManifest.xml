@@ -22,8 +22,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".ui.activity.ConversationDetailActivity"
             android:windowSoftInputMode="stateUnspecified|adjustResize"/>
+
+        <activity android:name=".ui.activity.NewMsgActivity"/>
+
         <receiver android:name=".receiver.SendSmsReceiver">
             <intent-filter>
                 <action android:name="com.yhx.intelligentsms.sendsms"/>

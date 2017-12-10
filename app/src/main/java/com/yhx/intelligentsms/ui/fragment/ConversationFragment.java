@@ -24,6 +24,7 @@ import com.yhx.intelligentsms.dialog.ConfirmDialog;
 import com.yhx.intelligentsms.dialog.DeleteMsgDialog;
 import com.yhx.intelligentsms.globle.Constant;
 import com.yhx.intelligentsms.ui.activity.ConversationDetailActivity;
+import com.yhx.intelligentsms.ui.activity.NewMsgActivity;
 
 import java.util.List;
 
@@ -140,8 +141,11 @@ public class ConversationFragment extends BaseFragment {
                 conversationListAdapter.notifyDataSetChanged();
                 break;
             case R.id.bt_conversation_new_msg:
+                Intent intent = new Intent(getActivity(), NewMsgActivity.class);
+                startActivity(intent);
                 break;
             case R.id.bt_conversation_select_all:
+                conversationListAdapter.selectAll();
                 break;
             case R.id.bt_conversation_cancel_select:
                 showEditMenu();
@@ -223,15 +227,15 @@ public class ConversationFragment extends BaseFragment {
     }
 
     private void showDeleteDialog(){
-        ConfirmDialog.showDialog(getActivity(), "提示", "真的要删除回话吗？", new ConfirmDialog.OnConfirmListener() {
+        ConfirmDialog.showDialog(getActivity(), "提示", "真的要删除会话吗？", new ConfirmDialog.OnConfirmListener() {
             @Override
             public void onCancel() {
-                deleteSms();
+
             }
 
             @Override
             public void onConfirm() {
-
+                deleteSms();
             }
         });
     }

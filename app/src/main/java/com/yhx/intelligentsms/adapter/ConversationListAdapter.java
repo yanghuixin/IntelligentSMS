@@ -69,17 +69,7 @@ public class ConversationListAdapter extends CursorAdapter {
         }else {
             viewHolder.iv_check.setVisibility(View.GONE);
         }
-        //判断当前是否进入选择模式
-        if (isSelectMode){
-            viewHolder.iv_check.setVisibility(View.VISIBLE);
-            if (selectedConversationId.contains(conversation.getThreadId())){
-                viewHolder.iv_check.setBackgroundResource(R.drawable.common_checkbox_checked);
-            }else {
-                viewHolder.iv_check.setBackgroundResource(R.drawable.common_checkbox_normal);
-            }
-        }else {
-            viewHolder.iv_check.setVisibility(View.GONE);
-        }
+
         //设置号码
         //按号码查询是否存有联系人
         String name = ContactDao.getNameByAddress(context.getContentResolver(),conversation.getAddress());
@@ -154,6 +144,10 @@ public class ConversationListAdapter extends CursorAdapter {
             selectedConversationIds.add(conversation.getThreadId());
         }
         notifyDataSetChanged();
+    }
+
+    public void selectAll(){
+
     }
 
     public List<Integer> getSelectedConversationIds() {
