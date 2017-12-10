@@ -106,17 +106,6 @@ public class ConversationFragment extends BaseFragment {
                 }
             }
         });
-        lv_conversation_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (conversationListAdapter.isSelectMode()){
-                    //选中选框
-                    conversationListAdapter.selectSingle(position);
-                }else {
-                    //进入会话详情
-                }
-            }
-        });
     }
 
     @Override
