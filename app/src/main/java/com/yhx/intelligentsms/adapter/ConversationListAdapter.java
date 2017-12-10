@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.yhx.intelligentsms.R;
 import com.yhx.intelligentsms.bean.Conversation;
 import com.yhx.intelligentsms.dao.ContactDao;
+import com.yhx.intelligentsms.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
