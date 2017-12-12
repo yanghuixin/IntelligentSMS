@@ -124,7 +124,7 @@ public class ConversationFragment extends BaseFragment {
                     showExitDialog(conversation.getThreadId());
                 }else {
                     //该会话没有被添加到群组中,弹出ListDialog，列出所有群组
-                    showSelectGroupDialog();
+                    showSelectGroupDialog(conversation.getThreadId());
                 }
                 //消费掉这个事件，否则会传递给OnItemClickListener
                 return true;
@@ -282,9 +282,9 @@ public class ConversationFragment extends BaseFragment {
         });
     }
 
-    private void showSelectGroupDialog(){
+    private void showSelectGroupDialog(final int thread_id){
         //查询一共有多少群组，取出名字全部存入items
-        Cursor cursor = getActivity().getContentResolver().query(Constant.URI.URI_GROUPS_QUERY, null, null, null, null);
+        final Cursor cursor = getActivity().getContentResolver().query(Constant.URI.URI_GROUPS_QUERY, null, null, null, null);
         if (cursor.getCount() == 0){
             ToastUtils.showToast(getActivity(), "当前没有群组，请先创建");
             return;
@@ -298,7 +298,12 @@ public class ConversationFragment extends BaseFragment {
         ListDialog.showDialog(getActivity(), "选择群组", items, new ListDialog.OnListDialogListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+                //cursor就是查询groups表得到的，里面就是群组的所有消息
+                cursor.moveToPosition(position);
+                Group group = Group.createFromCursor(cursor);
+                //把指定会话存入指定群组
+                boolean isSuccess = ThreadGroupDao.insertThreadGroup(getActivity().getContentResolver(), thread_id, group.get_id());
+                ToastUtils.showToast(getActivity(), isSuccess ? "插入成功" : "插入失败");
             }
         });
     }

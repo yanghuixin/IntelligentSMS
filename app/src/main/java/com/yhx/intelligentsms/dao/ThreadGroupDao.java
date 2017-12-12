@@ -1,7 +1,9 @@
 package com.yhx.intelligentsms.dao;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.database.Cursor;
+import android.net.Uri;
 
 import com.yhx.intelligentsms.globle.Constant;
 
@@ -33,5 +35,13 @@ public class ThreadGroupDao {
         Cursor cursor = resolver.query(Constant.URI.URI_THREAD_GROUP_QUERY, new String[]{"group_id"}, "thread_id = " + thread_id, null, null);
         cursor.moveToFirst();
         return cursor.getInt(cursor.getColumnIndex("group_id"));
+    }
+
+    public static boolean insertThreadGroup(ContentResolver resolver, int thread_id, int group_id){
+        ContentValues values = new ContentValues();
+        values.put("thread_id", thread_id);
+        values.put("group_id", group_id);
+        Uri uri = resolver.insert(Constant.URI.URI_THREAD_GROUP_INSERT, values);
+        return uri != null;
     }
 }
