@@ -19,14 +19,17 @@ import com.yhx.intelligentsms.R;
 import com.yhx.intelligentsms.adapter.ConversationListAdapter;
 import com.yhx.intelligentsms.base.BaseFragment;
 import com.yhx.intelligentsms.bean.Conversation;
+import com.yhx.intelligentsms.bean.Group;
 import com.yhx.intelligentsms.dao.GroupDao;
 import com.yhx.intelligentsms.dao.SimpleQueryHandler;
 import com.yhx.intelligentsms.dao.ThreadGroupDao;
 import com.yhx.intelligentsms.dialog.ConfirmDialog;
 import com.yhx.intelligentsms.dialog.DeleteMsgDialog;
+import com.yhx.intelligentsms.dialog.ListDialog;
 import com.yhx.intelligentsms.globle.Constant;
 import com.yhx.intelligentsms.ui.activity.ConversationDetailActivity;
 import com.yhx.intelligentsms.ui.activity.NewMsgActivity;
+import com.yhx.intelligentsms.utils.ToastUtils;
 
 import java.util.List;
 
@@ -116,14 +119,15 @@ public class ConversationFragment extends BaseFragment {
                 Cursor cursor = (Cursor) conversationListAdapter.getItem(position);
                 Conversation conversation = Conversation.createFromCursor(cursor);
                 //判断选中的会话是否有所属群组
-                if (ThreadGroupDao.hasGroup(getActivity().getContentResolver(), position)){
+                if (ThreadGroupDao.hasGroup(getActivity().getContentResolver(), conversation.getThreadId())){
                     //该会话已经被添加到群组中,弹出ConfirmDialog
-
+                    showExitDialog(conversation.getThreadId());
                 }else {
-                    //该会话没有被添加到群组中
-
+                    //该会话没有被添加到群组中,弹出ListDialog，列出所有群组
+                    showSelectGroupDialog();
                 }
-                return false;
+                //消费掉这个事件，否则会传递给OnItemClickListener
+                return true;
             }
         });
     }
@@ -273,6 +277,27 @@ public class ConversationFragment extends BaseFragment {
 
             @Override
             public void onConfirm() {
+
+            }
+        });
+    }
+
+    private void showSelectGroupDialog(){
+        //查询一共有多少群组，取出名字全部存入items
+        Cursor cursor = getActivity().getContentResolver().query(Constant.URI.URI_GROUPS_QUERY, null, null, null, null);
+        if (cursor.getCount() == 0){
+            ToastUtils.showToast(getActivity(), "当前没有群组，请先创建");
+            return;
+        }
+        String[] items = new String[cursor.getCount()];
+        //遍历cursor，取出名字
+        while (cursor.moveToNext()){
+            Group group = Group.createFromCursor(cursor);
+            items[cursor.getPosition()] = group.getName();
+        }
+        ListDialog.showDialog(getActivity(), "选择群组", items, new ListDialog.OnListDialogListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             }
         });

@@ -64,7 +64,7 @@ public class GroupProvider extends ContentProvider {
                 //只要该uri上的数据改变，内容观察者就会立刻发现，重新查询
                 cursor.setNotificationUri(getContext().getContentResolver(), BASE_URI);
                 return cursor;
-            case CODE_THREAD_GROUP_INSERT:
+            case CODE_THREAD_GROUP_QUERY:
                 cursor = db.query(TABLE_THREAD_GROUP, projection, selection, selectionArgs, null, null, sortOrder);
                 //监视uri上数据改变的一个内容观察者
                 //只要该uri上的数据改变，内容观察者就会立刻发现，重新查询
