@@ -19,7 +19,9 @@ import com.yhx.intelligentsms.R;
 import com.yhx.intelligentsms.adapter.ConversationListAdapter;
 import com.yhx.intelligentsms.base.BaseFragment;
 import com.yhx.intelligentsms.bean.Conversation;
+import com.yhx.intelligentsms.dao.GroupDao;
 import com.yhx.intelligentsms.dao.SimpleQueryHandler;
+import com.yhx.intelligentsms.dao.ThreadGroupDao;
 import com.yhx.intelligentsms.dialog.ConfirmDialog;
 import com.yhx.intelligentsms.dialog.DeleteMsgDialog;
 import com.yhx.intelligentsms.globle.Constant;
@@ -106,6 +108,22 @@ public class ConversationFragment extends BaseFragment {
                     intent.putExtra("thread_id", conversation.getThreadId());
                     startActivity(intent);
                 }
+            }
+        });
+        lv_conversation_list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Cursor cursor = (Cursor) conversationListAdapter.getItem(position);
+                Conversation conversation = Conversation.createFromCursor(cursor);
+                //判断选中的会话是否有所属群组
+                if (ThreadGroupDao.hasGroup(getActivity().getContentResolver(), position)){
+                    //该会话已经被添加到群组中,弹出ConfirmDialog
+
+                }else {
+                    //该会话没有被添加到群组中
+
+                }
+                return false;
             }
         });
     }
@@ -236,6 +254,26 @@ public class ConversationFragment extends BaseFragment {
             @Override
             public void onConfirm() {
                 deleteSms();
+            }
+        });
+    }
+
+    private void showExitDialog(int thread_id){
+        //先通过会话id查询群组id
+        int group_id = ThreadGroupDao.getGroupIdByThreadId(getActivity().getContentResolver(), thread_id);
+        //通过群组id查询群组名字
+        String name = GroupDao.getGroupNameByGroupId(getActivity().getContentResolver(), group_id);
+
+        String message = "该会话已经被添加至[" + name + "]群组,是否要退出该群组?";
+        ConfirmDialog.showDialog(getActivity(), "提示", message, new ConfirmDialog.OnConfirmListener() {
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onConfirm() {
+
             }
         });
     }

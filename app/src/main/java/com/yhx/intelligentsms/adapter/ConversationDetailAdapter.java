@@ -43,6 +43,7 @@ public class ConversationDetailAdapter extends CursorAdapter {
         //判断当前短信与上一条短信的时间间隔是否超过3分钟
         //第一条短信，不需要对比
         if (cursor.getPosition() == 0){
+            viewHolder.tv_conversation_detail_date.setVisibility(View.VISIBLE);
             showDate(context,viewHolder,sms);
         }else {
             long preDate = getPreviousSmsDate(cursor.getPosition());

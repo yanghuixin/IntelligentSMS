@@ -89,7 +89,7 @@ public class GroupFragmet extends BaseFragment {
         lv_group_list.setAdapter(adapter);
 
         queryHandler = new SimpleQueryHandler(getActivity().getContentResolver());
-        queryHandler.startQuery(0, adapter, Constant.URI.URI_GROUP_QUERY, null, null, null, "create_date desc");
+        queryHandler.startQuery(0, adapter, Constant.URI.URI_GROUPS_QUERY, null, null, null, "create_date desc");
     }
 
     @Override

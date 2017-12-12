@@ -21,6 +21,7 @@ public class GroupProvider extends ContentProvider {
     private GroupOpenHelper helper;
     private SQLiteDatabase db;
     private static final String TABLE_GROUPS = "groups";
+    private static final String TABLE_THREAD_GROUP = "thread_group";
 
     private static final String authority = "com.yhx.intelligentsms";
     public static final Uri BASE_URI = Uri.parse("content://" + authority);
@@ -29,6 +30,10 @@ public class GroupProvider extends ContentProvider {
     private static final int CODE_GROUPS_QUERY = 1;
     private static final int CODE_GROUPS_UPDATE = 2;
     private static final int CODE_GROUPS_DELETE = 3;
+    private static final int CODE_THREAD_GROUP_INSERT = 4;
+    private static final int CODE_THREAD_GROUP_QUERY = 5;
+    private static final int CODE_THREAD_GROUP_UPDATE = 6;
+    private static final int CODE_THREAD_GROUP_DELETE = 7;
 
     UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
     {
@@ -37,6 +42,10 @@ public class GroupProvider extends ContentProvider {
         matcher.addURI(authority, "groups/query", CODE_GROUPS_QUERY);
         matcher.addURI(authority, "groups/update", CODE_GROUPS_UPDATE);
         matcher.addURI(authority, "groups/delete", CODE_GROUPS_DELETE);
+        matcher.addURI(authority, "thread_group/insert", CODE_THREAD_GROUP_INSERT);
+        matcher.addURI(authority, "thread_group/query", CODE_THREAD_GROUP_QUERY);
+        matcher.addURI(authority, "thread_group/update", CODE_THREAD_GROUP_UPDATE);
+        matcher.addURI(authority, "thread_group/delete", CODE_THREAD_GROUP_DELETE);
     }
     @Override
     public boolean onCreate() {
@@ -51,6 +60,12 @@ public class GroupProvider extends ContentProvider {
         switch (matcher.match(uri)){
             case CODE_GROUPS_QUERY:
                 Cursor cursor = db.query(TABLE_GROUPS, projection, selection, selectionArgs, null, null, sortOrder);
+                //监视uri上数据改变的一个内容观察者
+                //只要该uri上的数据改变，内容观察者就会立刻发现，重新查询
+                cursor.setNotificationUri(getContext().getContentResolver(), BASE_URI);
+                return cursor;
+            case CODE_THREAD_GROUP_INSERT:
+                cursor = db.query(TABLE_THREAD_GROUP, projection, selection, selectionArgs, null, null, sortOrder);
                 //监视uri上数据改变的一个内容观察者
                 //只要该uri上的数据改变，内容观察者就会立刻发现，重新查询
                 cursor.setNotificationUri(getContext().getContentResolver(), BASE_URI);
@@ -80,6 +95,16 @@ public class GroupProvider extends ContentProvider {
                     //把返回的行id，拼接在uri后面，然后返回
                     return ContentUris.withAppendedId(uri, rawId);
                 }
+            case CODE_THREAD_GROUP_INSERT:
+                rawId = db.insert(TABLE_THREAD_GROUP, null, values);
+                //插入失败
+                if (rawId == -1){
+                    return null;
+                }else {
+                    getContext().getContentResolver().notifyChange(BASE_URI, null);
+                    //把返回的行id，拼接在uri后面，然后返回
+                    return ContentUris.withAppendedId(uri, rawId);
+                }
             default:
                 throw new IllegalArgumentException("未识别的uri:" + uri);
         }
@@ -92,6 +117,10 @@ public class GroupProvider extends ContentProvider {
                 int number = db.delete(TABLE_GROUPS, selection, selectionArgs);
                 getContext().getContentResolver().notifyChange(BASE_URI, null);
                 return number;
+            case CODE_THREAD_GROUP_DELETE:
+                number = db.delete(TABLE_THREAD_GROUP, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(BASE_URI, null);
+                return number;
             default:
                 throw new IllegalArgumentException("未识别的uri:" + uri);
         }
@@ -102,6 +131,10 @@ public class GroupProvider extends ContentProvider {
         switch (matcher.match(uri)){
             case CODE_GROUPS_UPDATE:
                 int number = db.update(TABLE_GROUPS, values, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(BASE_URI, null);
+                return number;
+            case CODE_THREAD_GROUP_UPDATE:
+                number = db.update(TABLE_THREAD_GROUP, values, selection, selectionArgs);
                 getContext().getContentResolver().notifyChange(BASE_URI, null);
                 return number;
             default:
