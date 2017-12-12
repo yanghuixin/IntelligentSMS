@@ -1,6 +1,7 @@
 package com.yhx.intelligentsms.ui.fragment;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 import com.yhx.intelligentsms.R;
 import com.yhx.intelligentsms.adapter.GroupListAdapter;
 import com.yhx.intelligentsms.base.BaseFragment;
+import com.yhx.intelligentsms.bean.Group;
 import com.yhx.intelligentsms.dao.GroupDao;
 import com.yhx.intelligentsms.dao.SimpleQueryHandler;
 import com.yhx.intelligentsms.dialog.InputDialog;
@@ -49,12 +51,26 @@ public class GroupFragmet extends BaseFragment {
         lv_group_list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                Cursor cursor = (Cursor) adapter.getItem(position);
+                final Group group = Group.createFromCursor(cursor);
                 ListDialog.showDialog(getActivity(), "选择操作", new String[]{"修改", "删除"}, new ListDialog.OnListDialogListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         switch (position){
                             case 0:
-                                ToastUtils.showToast(getActivity(), "修改");
+                                //弹出输入对话框
+                                InputDialog.showDialog(getActivity(), "修改群组", new InputDialog.OnInputDialogListener() {
+                                    @Override
+                                    public void onCancel() {
+
+                                    }
+
+                                    @Override
+                                    public void onConfirm(String text) {
+                                        //确认修改群组名称
+                                        GroupDao.updateGroupName(getActivity().getContentResolver(), text, group.get_id());
+                                    }
+                                });
                                 break;
                             case 1:
                                 ToastUtils.showToast(getActivity(), "删除");

@@ -23,4 +23,16 @@ public class GroupDao {
         values.put("create_date", System.currentTimeMillis());
         resolver.insert(Constant.URI.URI_GROUP_INSERT, values);
     }
+
+    /**
+     * 修改群组名称
+     * @param resolver
+     * @param groupName
+     * @param _id
+     */
+    public static void updateGroupName(ContentResolver resolver, String groupName, int _id){
+        ContentValues values = new ContentValues();
+        values.put("name", groupName);
+        resolver.update(Constant.URI.URI_GROUP_UPDATE, values, "_id = " + _id, null);
+    }
 }

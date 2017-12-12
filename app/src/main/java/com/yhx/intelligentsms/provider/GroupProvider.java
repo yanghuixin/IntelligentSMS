@@ -27,12 +27,16 @@ public class GroupProvider extends ContentProvider {
 
     private static final int CODE_GROUPS_INSERT = 0;
     private static final int CODE_GROUPS_QUERY = 1;
+    private static final int CODE_GROUPS_UPDATE = 2;
+    private static final int CODE_GROUPS_DELETE = 3;
 
     UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
     {
         //添加匹配规则
         matcher.addURI(authority, "groups/insert", CODE_GROUPS_INSERT);
         matcher.addURI(authority, "groups/query", CODE_GROUPS_QUERY);
+        matcher.addURI(authority, "groups/update", CODE_GROUPS_UPDATE);
+        matcher.addURI(authority, "groups/delete", CODE_GROUPS_DELETE);
     }
     @Override
     public boolean onCreate() {
@@ -79,11 +83,23 @@ public class GroupProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        switch (matcher.match(uri)){
+            case CODE_GROUPS_DELETE:
+                int number = db.delete(TABLE_GROUPS, selection, selectionArgs);
+                return number;
+            default:
+                throw new IllegalArgumentException("未识别的uri:" + uri);
+        }
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        switch (matcher.match(uri)){
+            case CODE_GROUPS_UPDATE:
+                int number = db.update(TABLE_GROUPS, values, selection, selectionArgs);
+                return number;
+            default:
+                throw new IllegalArgumentException("未识别的uri:" + uri);
+        }
     }
 }
