@@ -61,4 +61,30 @@ public class GroupDao {
         return name;
     }
 
+    /**
+     * 获取指定群组中存放的会话数量
+     * @param resolver
+     * @param _id
+     * @return
+     */
+    public static int getThreadCount(ContentResolver resolver, int _id){
+        int threadCount = -1;
+        Cursor cursor = resolver.query(Constant.URI.URI_GROUPS_QUERY, new String[]{"thread_count"}, "_id = " + _id, null, null);
+        if (cursor.moveToNext()){
+            threadCount = cursor.getInt(cursor.getColumnIndex("thread_count"));
+        }
+        return threadCount;
+    }
+
+    /**
+     * 更新指定群组的会话数量
+     * @param resolver
+     * @param _id
+     * @param threadCount
+     */
+    public static void updateThreadCount(ContentResolver resolver, int _id, int threadCount){
+        ContentValues values = new ContentValues();
+        values.put("thread_count", threadCount);
+        resolver.update(Constant.URI.URI_GROUPS_UPDATE, values, "_id = " + _id, null);
+    }
 }

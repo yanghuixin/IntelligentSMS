@@ -49,6 +49,13 @@ public class ThreadGroupDao {
         values.put("thread_id", thread_id);
         values.put("group_id", group_id);
         Uri uri = resolver.insert(Constant.URI.URI_THREAD_GROUP_INSERT, values);
+
+        if (uri != null){
+            //插入会话后，改变群组的会话数量
+            int thread_count = GroupDao.getThreadCount(resolver, group_id);
+            GroupDao.updateThreadCount(resolver, group_id, thread_count + 1);
+        }
+
         return uri != null;
     }
 
@@ -56,10 +63,18 @@ public class ThreadGroupDao {
      * 从群组中删除会话
      * @param resolver
      * @param thread_id
+     * @param group_id
      * @return
      */
-    public static boolean deleteThreadGroupByThreadId(ContentResolver resolver, int thread_id){
+    public static boolean deleteThreadGroupByThreadId(ContentResolver resolver, int thread_id,int group_id){
         int number = resolver.delete(Constant.URI.URI_THREAD_GROUP_DELETE, "thread_id = " + thread_id, null);
+
+        if (number > 0){
+            //删除会话后，改变群组的会话数量
+            int thread_count = GroupDao.getThreadCount(resolver, group_id);
+            GroupDao.updateThreadCount(resolver, group_id, thread_count - 1);
+        }
+
         return number > 0;
     }
 }
