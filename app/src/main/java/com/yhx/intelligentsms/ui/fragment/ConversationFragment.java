@@ -262,7 +262,7 @@ public class ConversationFragment extends BaseFragment {
         });
     }
 
-    private void showExitDialog(int thread_id){
+    private void showExitDialog(final int thread_id){
         //先通过会话id查询群组id
         int group_id = ThreadGroupDao.getGroupIdByThreadId(getActivity().getContentResolver(), thread_id);
         //通过群组id查询群组名字
@@ -277,7 +277,9 @@ public class ConversationFragment extends BaseFragment {
 
             @Override
             public void onConfirm() {
-
+                //把选中的会话从群组中删除
+                boolean isSuccess = ThreadGroupDao.deleteThreadGroupByThreadId(getActivity().getContentResolver(), thread_id);
+                ToastUtils.showToast(getActivity(), isSuccess ? "退出群组成功" : "退出群组失败");
             }
         });
     }
@@ -303,7 +305,7 @@ public class ConversationFragment extends BaseFragment {
                 Group group = Group.createFromCursor(cursor);
                 //把指定会话存入指定群组
                 boolean isSuccess = ThreadGroupDao.insertThreadGroup(getActivity().getContentResolver(), thread_id, group.get_id());
-                ToastUtils.showToast(getActivity(), isSuccess ? "插入成功" : "插入失败");
+                ToastUtils.showToast(getActivity(), isSuccess ? "添加群组成功" : "添加群组失败");
             }
         });
     }
