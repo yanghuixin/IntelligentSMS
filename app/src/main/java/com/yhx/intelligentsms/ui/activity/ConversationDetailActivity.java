@@ -26,7 +26,7 @@ public class ConversationDetailActivity extends BaseActivity {
     private String address;
     private int thread_id;
     private SimpleQueryHandler queryHandler;
-    private ConversationDetailAdapter conversationDetailAdapter;
+    private ConversationDetailAdapter adapter;
     private ListView lv_conversation_detail;
     private EditText et_conversation_detail;
     private Button bt_conversation_detail_send;
@@ -58,8 +58,8 @@ public class ConversationDetailActivity extends BaseActivity {
             initTitleBar();
         }
         //为会话详细界面的listview设置adapter，显示会话的所有短信
-        conversationDetailAdapter = new ConversationDetailAdapter(this, null, lv_conversation_detail);
-        lv_conversation_detail.setAdapter(conversationDetailAdapter);
+        adapter = new ConversationDetailAdapter(this, null, lv_conversation_detail);
+        lv_conversation_detail.setAdapter(adapter);
         //根据会话id查询该会话所有的短信
         String[] projection = {
                 "_id",
@@ -70,7 +70,7 @@ public class ConversationDetailActivity extends BaseActivity {
         String selection = "thread_id = " + thread_id;
         //异步查询短信
         queryHandler = new SimpleQueryHandler(getContentResolver());
-        queryHandler.startQuery(0, conversationDetailAdapter, Constant.URI.URI_SMS, projection, selection, null, "date");
+        queryHandler.startQuery(0, adapter, Constant.URI.URI_SMS, projection, selection, null, "date");
         //Cursor cursor = getContentResolver().query(Constant.URI.URI_SMS, projection, selection, null, "date");
     }
 

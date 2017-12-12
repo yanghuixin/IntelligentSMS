@@ -47,7 +47,7 @@ public class ConversationFragment extends BaseFragment {
     private LinearLayout ll_conversation_edit_menu;
     private LinearLayout ll_conversation_select_menu;
     private ListView lv_conversation_list;
-    private ConversationListAdapter conversationListAdapter;
+    private ConversationListAdapter adapter;
     private List<Integer> selectedConversationIds;
     private DeleteMsgDialog dialog;
     private boolean isStopDelete = false;
@@ -60,8 +60,8 @@ public class ConversationFragment extends BaseFragment {
             switch (msg.what){
                 case WHAT_DELETE_COMPLETE:
                     //退出选择模式，显示编辑菜单
-                    conversationListAdapter.setSelectMode(false);
-                    conversationListAdapter.notifyDataSetChanged();
+                    adapter.setSelectMode(false);
+                    adapter.notifyDataSetChanged();
                     showEditMenu();
                     dialog.dismiss();
                     break;
@@ -98,14 +98,14 @@ public class ConversationFragment extends BaseFragment {
         lv_conversation_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (conversationListAdapter.isSelectMode()){
+                if (adapter.isSelectMode()){
                     //选中选框
-                    conversationListAdapter.selectSingle(position);
+                    adapter.selectSingle(position);
                 }else {
                     //进入会话
                     Intent intent = new Intent(getActivity(), ConversationDetailActivity.class);
                     //携带数据：address和thread_id
-                    Cursor cursor = (Cursor) conversationListAdapter.getItem(position);
+                    Cursor cursor = (Cursor) adapter.getItem(position);
                     Conversation conversation = Conversation.createFromCursor(cursor);
                     intent.putExtra("address", conversation.getAddress());
                     intent.putExtra("thread_id", conversation.getThreadId());
@@ -116,7 +116,7 @@ public class ConversationFragment extends BaseFragment {
         lv_conversation_list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Cursor cursor = (Cursor) conversationListAdapter.getItem(position);
+                Cursor cursor = (Cursor) adapter.getItem(position);
                 Conversation conversation = Conversation.createFromCursor(cursor);
                 //判断选中的会话是否有所属群组
                 if (ThreadGroupDao.hasGroup(getActivity().getContentResolver(), conversation.getThreadId())){
@@ -135,8 +135,8 @@ public class ConversationFragment extends BaseFragment {
     @Override
     public void initData() {
         //创建一个CursorAdapter对象
-        conversationListAdapter = new ConversationListAdapter(getActivity(),null);
-        lv_conversation_list.setAdapter(conversationListAdapter);
+        adapter = new ConversationListAdapter(getActivity(),null);
+        lv_conversation_list.setAdapter(adapter);
         //Cursor cursor = getActivity().getContentResolver().query(Constant.URI.URI_SMS_CONVERSATION,null,null,null,null);
         SimpleQueryHandler simpleQueryHandler = new SimpleQueryHandler(getActivity().getContentResolver());
 
@@ -150,7 +150,7 @@ public class ConversationFragment extends BaseFragment {
         //开始异步查询
         //arg0、arg1：可以用来携带一个int型和一个对象
         //arg1：用来携带adapter对象，查询完毕后给adapter设置cursor
-        simpleQueryHandler.startQuery(0,conversationListAdapter,Constant.URI.URI_SMS_CONVERSATION,projection,null,null,"date desc");
+        simpleQueryHandler.startQuery(0,adapter,Constant.URI.URI_SMS_CONVERSATION,projection,null,null,"date desc");
     }
 
     @Override
@@ -159,24 +159,24 @@ public class ConversationFragment extends BaseFragment {
             case R.id.bt_conversation_edit:
                 showSelectMenu();
                 //进入选择模式
-                conversationListAdapter.setSelectMode(true);
-                conversationListAdapter.notifyDataSetChanged();
+                adapter.setSelectMode(true);
+                adapter.notifyDataSetChanged();
                 break;
             case R.id.bt_conversation_new_msg:
                 Intent intent = new Intent(getActivity(), NewMsgActivity.class);
                 startActivity(intent);
                 break;
             case R.id.bt_conversation_select_all:
-                conversationListAdapter.selectAll();
+                adapter.selectAll();
                 break;
             case R.id.bt_conversation_cancel_select:
                 showEditMenu();
                 //退出选择模式
-                conversationListAdapter.setSelectMode(false);
-                conversationListAdapter.notifyDataSetChanged();
+                adapter.setSelectMode(false);
+                adapter.notifyDataSetChanged();
                 break;
             case R.id.bt_conversation_delete:
-                selectedConversationIds = conversationListAdapter.getSelectedConversationIds();
+                selectedConversationIds = adapter.getSelectedConversationIds();
                 if (selectedConversationIds.size() == 0){
                     return;
                 }

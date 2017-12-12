@@ -1,6 +1,7 @@
 package com.yhx.intelligentsms.ui.fragment;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +23,7 @@ import com.yhx.intelligentsms.dao.SimpleQueryHandler;
 import com.yhx.intelligentsms.dialog.InputDialog;
 import com.yhx.intelligentsms.dialog.ListDialog;
 import com.yhx.intelligentsms.globle.Constant;
+import com.yhx.intelligentsms.ui.activity.GroupDetailActivity;
 import com.yhx.intelligentsms.utils.ToastUtils;
 
 /**
@@ -79,6 +81,24 @@ public class GroupFragmet extends BaseFragment {
                     }
                 });
                 return false;
+            }
+        });
+
+        lv_group_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //跳转时携带群组名字，群组id
+                Cursor cursor = (Cursor) adapter.getItem(position);
+                Group group = Group.createFromCursor(cursor);
+                if (group.getThread_count() > 0){
+                    //点击群组列表的条目，跳转到群组详细Activity
+                    Intent intent = new Intent(getActivity(), GroupDetailActivity.class);
+                    intent.putExtra("name", group.getName());
+                    intent.putExtra("group_id", group.get_id());
+                    startActivity(intent);
+                }else {
+                    ToastUtils.showToast(getActivity(), "当前群组没有任何会话");
+                }
             }
         });
     }

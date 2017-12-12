@@ -28,6 +28,8 @@
 
         <activity android:name=".ui.activity.NewMsgActivity"/>
 
+        <activity android:name=".ui.activity.GroupDetailActivity"/>
+
         <receiver android:name=".receiver.SendSmsReceiver">
             <intent-filter>
                 <action android:name="com.yhx.intelligentsms.sendsms"/>
