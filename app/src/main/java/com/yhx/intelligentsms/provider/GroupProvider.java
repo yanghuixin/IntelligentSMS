@@ -51,6 +51,9 @@ public class GroupProvider extends ContentProvider {
         switch (matcher.match(uri)){
             case CODE_GROUPS_QUERY:
                 Cursor cursor = db.query(TABLE_GROUPS, projection, selection, selectionArgs, null, null, sortOrder);
+                //监视uri上数据改变的一个内容观察者
+                //只要该uri上的数据改变，内容观察者就会立刻发现，重新查询
+                cursor.setNotificationUri(getContext().getContentResolver(), BASE_URI);
                 return cursor;
             default:
                 throw new IllegalArgumentException("未识别的uri:" + uri);
@@ -73,6 +76,7 @@ public class GroupProvider extends ContentProvider {
                 if (rawId == -1){
                     return null;
                 }else {
+                    getContext().getContentResolver().notifyChange(BASE_URI, null);
                     //把返回的行id，拼接在uri后面，然后返回
                     return ContentUris.withAppendedId(uri, rawId);
                 }
@@ -86,6 +90,7 @@ public class GroupProvider extends ContentProvider {
         switch (matcher.match(uri)){
             case CODE_GROUPS_DELETE:
                 int number = db.delete(TABLE_GROUPS, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(BASE_URI, null);
                 return number;
             default:
                 throw new IllegalArgumentException("未识别的uri:" + uri);
@@ -97,6 +102,7 @@ public class GroupProvider extends ContentProvider {
         switch (matcher.match(uri)){
             case CODE_GROUPS_UPDATE:
                 int number = db.update(TABLE_GROUPS, values, selection, selectionArgs);
+                getContext().getContentResolver().notifyChange(BASE_URI, null);
                 return number;
             default:
                 throw new IllegalArgumentException("未识别的uri:" + uri);

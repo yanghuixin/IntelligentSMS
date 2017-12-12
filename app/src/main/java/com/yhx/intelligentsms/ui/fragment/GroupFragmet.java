@@ -57,7 +57,7 @@ public class GroupFragmet extends BaseFragment {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                         switch (position){
-                            case 0:
+                            case 0://修改
                                 //弹出输入对话框
                                 InputDialog.showDialog(getActivity(), "修改群组", new InputDialog.OnInputDialogListener() {
                                     @Override
@@ -72,8 +72,8 @@ public class GroupFragmet extends BaseFragment {
                                     }
                                 });
                                 break;
-                            case 1:
-                                ToastUtils.showToast(getActivity(), "删除");
+                            case 1://删除
+                                GroupDao.deleteGroup(getActivity().getContentResolver(), group.get_id());
                                 break;
                         }
                     }

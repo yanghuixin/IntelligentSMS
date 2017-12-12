@@ -35,4 +35,13 @@ public class GroupDao {
         values.put("name", groupName);
         resolver.update(Constant.URI.URI_GROUP_UPDATE, values, "_id = " + _id, null);
     }
+
+    /**
+     * 删除群组
+     * @param resolver
+     * @param _id
+     */
+    public static void deleteGroup(ContentResolver resolver, int _id){
+        resolver.delete(Constant.URI.URI_GROUP_DELETE, "_id = " + _id, null);
+    }
 }
